@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - db_data:/data
+      - caddy_data:/data/caddy
+      - caddy_config:/config/caddy
+    env_file: .env
+    environment:
+      APP_ENV: prod
+      DATABASE_URL: sqlite:////data/yettidb.sqlite
+
+volumes:
+  db_data:
+  caddy_data:
+  caddy_config:
