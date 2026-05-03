@@ -48,7 +48,7 @@ final class YettiControllerTest extends FunctionalTestCase
     public function testSubmitValidFormCreatesYettiAndRedirects(): void
     {
         $crawler = $this->client->request('GET', '/yetti/new');
-        $form    = $crawler->selectButton('Uložit Yetiho')->form([
+        $form    = $crawler->selectButton('Uložit Yettiho')->form([
             'name'    => 'Karel',
             'gender'  => 'male',
             'height'  => '182',
@@ -67,7 +67,7 @@ final class YettiControllerTest extends FunctionalTestCase
     public function testSubmitFormWithMissingNameShowsError(): void
     {
         $crawler = $this->client->request('GET', '/yetti/new');
-        $form    = $crawler->selectButton('Uložit Yetiho')->form([
+        $form    = $crawler->selectButton('Uložit Yettiho')->form([
             'name'    => '',
             'gender'  => 'male',
             'height'  => '175',
