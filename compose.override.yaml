@@ -2,13 +2,14 @@ services:
   app:
     volumes:
       - ./:/app
+      # Keep vendor/ from the image so dev deps don't pollute the mounted source
       - /app/vendor
+      # Keep var/ off the bind-mount for faster I/O
+      - /app/var
       - ./frankenphp/Caddyfile:/etc/frankenphp/Caddyfile:ro
       - ./frankenphp/conf.d/10-app.ini:/usr/local/etc/php/app.conf.d/10-app.ini:ro
-      - db_data:/data
-      - caddy_data:/data/caddy
-      - caddy_config:/config/caddy
     environment:
       APP_ENV: dev
+      APP_SECRET: dev_secret_not_for_production
       DATABASE_URL: sqlite:////data/yettidb.sqlite
       FRANKENPHP_WORKER_CONFIG: watch
