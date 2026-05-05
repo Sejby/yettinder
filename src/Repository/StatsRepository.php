@@ -70,7 +70,7 @@ final readonly class StatsRepository implements StatsRepositoryInterface
              FROM yetti_vote
              WHERE voted_at >= date('now', :offset)
              GROUP BY period
-             ORDER BY period ASC",
+             ORDER BY period",
             ['offset' => sprintf('-%d days', $days - 1)],
         );
 

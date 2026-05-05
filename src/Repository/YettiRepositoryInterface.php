@@ -18,5 +18,7 @@ interface YettiRepositoryInterface
     /** @param int[] $excludeIds */
     public function findNextMatch(array $excludeIds): ?YettiMatch;
 
+    public function exists(int $id): bool;
+
     public function save(Yetti $yetti): void;
 }

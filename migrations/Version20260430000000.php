@@ -11,7 +11,7 @@ final class Version20260430000000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Creates the yetti table';
+        return 'Creates yetti table';
     }
 
     public function up(Schema $schema): void

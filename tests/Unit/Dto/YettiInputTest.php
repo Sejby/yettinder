@@ -14,10 +14,10 @@ final class YettiInputTest extends TestCase
         $input = new YettiInput();
         $input->name = 'Jan';
         $input->gender = 'male';
-        $input->height = '180';
-        $input->weight = '75.0';
+        $input->height = 180;
+        $input->weight = 75.0;
         $input->address = 'Teplice';
-        $input->rating = '4.5';
+        $input->rating = 4.5;
 
         return $input;
     }

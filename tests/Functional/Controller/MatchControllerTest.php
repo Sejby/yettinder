@@ -96,6 +96,23 @@ final class MatchControllerTest extends FunctionalTestCase
     /**
      * @throws Exception
      */
+    public function testVoteForNonExistentYettiReturns404(): void
+    {
+        $this->insertYetti();
+        $crawler = $this->client->request('GET', '/match');
+        $token   = $crawler->filter('input[name="_token"]')->first()->attr('value');
+
+        $this->client->request('POST', '/match/9999/vote', [
+            '_token' => $token,
+            'vote'   => '1',
+        ]);
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testVoteWithInvalidVoteValueReturns404(): void
     {
         $id      = $this->insertYetti();

@@ -49,12 +49,12 @@ final class YettiControllerTest extends FunctionalTestCase
     {
         $crawler = $this->client->request('GET', '/yetti/new');
         $form    = $crawler->selectButton('Uložit Yettiho')->form([
-            'name'    => 'Karel',
-            'gender'  => 'male',
-            'height'  => '182',
-            'weight'  => '80',
-            'address' => 'Brno',
-            'rating'  => '4.0',
+            'yetti_input[name]'    => 'Karel',
+            'yetti_input[gender]'  => 'male',
+            'yetti_input[height]'  => '182',
+            'yetti_input[weight]'  => '80',
+            'yetti_input[address]' => 'Brno',
+            'yetti_input[rating]'  => '4.0',
         ]);
 
         $this->client->submit($form);
@@ -68,28 +68,30 @@ final class YettiControllerTest extends FunctionalTestCase
     {
         $crawler = $this->client->request('GET', '/yetti/new');
         $form    = $crawler->selectButton('Uložit Yettiho')->form([
-            'name'    => '',
-            'gender'  => 'male',
-            'height'  => '175',
-            'weight'  => '70',
-            'address' => 'Praha',
-            'rating'  => '3.0',
+            'yetti_input[name]'    => '',
+            'yetti_input[gender]'  => 'male',
+            'yetti_input[height]'  => '175',
+            'yetti_input[weight]'  => '70',
+            'yetti_input[address]' => 'Praha',
+            'yetti_input[rating]'  => '3.0',
         ]);
 
         $this->client->submit($form);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.alert-danger', 'Jméno je povinné');
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorTextContains('.invalid-feedback', 'Jméno je povinné');
     }
 
     public function testSubmitFormWithInvalidCsrfShowsError(): void
     {
         $this->client->request('POST', '/yetti/new', [
-            '_token' => 'invalid-token',
-            'name'   => 'Karel',
-            'gender' => 'male',
+            'yetti_input' => [
+                '_token' => 'invalid-token',
+                'name'   => 'Karel',
+                'gender' => 'male',
+            ],
         ]);
 
-        $this->assertSelectorTextContains('body', 'bezpečnostní token');
+        $this->assertSelectorTextContains('.alert-danger', 'bezpečnostní token');
     }
 }

@@ -39,6 +39,10 @@ final class MatchController extends AbstractController
             throw new AccessDeniedHttpException('Neplatný bezpečnostní token.');
         }
 
+        if (!$this->yettiRepository->exists($id)) {
+            throw $this->createNotFoundException('Yetti nenalezen.');
+        }
+
         $vote = (int) $request->request->get('vote');
         if (!in_array($vote, [-1, 1], true)) {
             throw $this->createNotFoundException('Neplatná hodnota hlasu.');

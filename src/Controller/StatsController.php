@@ -24,7 +24,7 @@ final class StatsController extends AbstractController
             'byYear'  => $this->stats->getVotesByYear(),
             'byMonth' => $this->stats->getVotesByMonth(24),
             'byDay'   => $byDay,
-            'topYettis' => $this->stats->getTopYettisByScore(10),
+            'top' => $this->stats->getTopYettisByScore(10),
             'chartLabels'   => array_column($byDay, 'period'),
             'chartPositive' => array_column($byDay, 'positive'),
             'chartNegative' => array_column($byDay, 'negative'),

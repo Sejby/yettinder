@@ -18,31 +18,28 @@ final class YettiInput
 
     #[Assert\Range(
         notInRangeMessage: 'Výška musí být mezi {{ min }} a {{ max }} cm.',
-        invalidMessage: 'Výška musí být číslo.',
         min: 50,
         max: 350,
     )]
-    public string $height = '';
+    public int $height = 0;
 
     #[Assert\Range(
         notInRangeMessage: 'Váha musí být mezi {{ min }} a {{ max }} kg.',
-        invalidMessage: 'Váha musí být číslo.',
         min: 10.0,
         max: 500.0,
     )]
-    public string $weight = '';
+    public float $weight = 0.0;
 
-    #[Assert\NotBlank(normalizer: 'trim', message: 'Bydliště je povinné.')]
+    #[Assert\NotBlank(message: 'Bydliště je povinné.', normalizer: 'trim')]
     #[Assert\Length(max: 120, maxMessage: 'Bydliště může mít nejvýše 120 znaků.')]
     public string $address = '';
 
     #[Assert\Range(
         notInRangeMessage: 'Hodnocení musí být mezi {{ min }} a {{ max }}.',
-        invalidMessage: 'Hodnocení musí být číslo.',
         min: 0.0,
         max: 5.0,
     )]
-    public string $rating = '';
+    public float $rating = 0.0;
 
     public function toYetti(): Yetti
     {
@@ -50,10 +47,10 @@ final class YettiInput
             id: null,
             name: trim($this->name),
             gender: $this->gender,
-            height: (int) $this->height,
-            weight: (float) $this->weight,
+            height: $this->height,
+            weight: $this->weight,
             address: trim($this->address),
-            rating: (float) $this->rating,
+            rating: $this->rating,
         );
     }
 }

@@ -80,6 +80,15 @@ final readonly class YettiRepository implements YettiRepositoryInterface
     }
 
     /** @throws Exception */
+    public function exists(int $id): bool
+    {
+        return (bool) $this->connection->fetchOne(
+            'SELECT 1 FROM yetti WHERE id = ?',
+            [$id],
+        );
+    }
+
+    /** @throws Exception */
     public function save(Yetti $yetti): void
     {
         $this->connection->insert('yetti', [
@@ -92,7 +101,6 @@ final readonly class YettiRepository implements YettiRepositoryInterface
         ]);
     }
 
-    /** @param array<string, mixed> $row */
     private function hydrate(array $row): Yetti
     {
         return new Yetti(
