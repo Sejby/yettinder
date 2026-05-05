@@ -24,7 +24,42 @@
         </div>
 
         <h2 class="h5 mb-3">Nejlépe hodnocení Yettiové</h2>
-        {% if yettis is empty %}
+        {% if topYettis is empty %}
+            <p class="text-muted">Zatím zde není žádný Yetti. <a href="{{ path('app_yetti_new') }}">Přidej prvního!</a>
+            </p>
+        {% else %}
+            <div class="table-responsive mb-5">
+                <table class="table table-sm align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Jméno</th>
+                        <th>Pohlaví</th>
+                        <th>Výška</th>
+                        <th>Váha</th>
+                        <th>Bydliště</th>
+                        <th>Hodnocení</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for yetti in topYettis %}
+                        <tr>
+                            <td class="text-muted">{{ loop.index }}</td>
+                            <td>{{ yetti.name }}</td>
+                            <td>{{ yetti.gender }}</td>
+                            <td>{{ yetti.height }} cm</td>
+                            <td>{{ yetti.weight }} kg</td>
+                            <td>{{ yetti.address }}</td>
+                            <td>{{ yetti.rating }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        <h2 class="h5 mb-3">Všichni Yettiové</h2>
+        {% if allYettis is empty %}
             <p class="text-muted">Zatím zde není žádný Yetti. <a href="{{ path('app_yetti_new') }}">Přidej prvního!</a>
             </p>
         {% else %}
@@ -42,7 +77,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for yetti in yettis %}
+                    {% for yetti in allYettis %}
                         <tr>
                             <td class="text-muted">{{ loop.index }}</td>
                             <td>{{ yetti.name }}</td>

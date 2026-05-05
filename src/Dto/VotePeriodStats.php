@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use Kenny1911\DoctrineDbalHydrator\Mapping\Attribute\Column;
+
 final readonly class VotePeriodStats
 {
     public function __construct(
-        public string $period,
-        public int    $total,
-        public int    $positive,
-        public int    $negative,
-        public int    $score,
+        #[Column] public string $period,
+        #[Column] public int    $total,
+        #[Column] public int    $positive,
+        #[Column] public int    $negative,
+        #[Column] public int    $score,
     )
     {
     }

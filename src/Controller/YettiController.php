@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\YettiInput;
-use App\Form\YettiInputType;
+use App\Dto\YettiForm;
+use App\Form\YettiFormType;
 use App\Repository\YettiRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,19 +24,19 @@ final class YettiController extends AbstractController
     public function index(): Response
     {
         return $this->render('index.html.twig', [
-            'yettis' => $this->repository->findTopRated(),
+            'topYettis' => $this->repository->findTopRated(),
+            'allYettis' => $this->repository->findAll(),
         ]);
     }
 
     #[Route('/yetti/new', name: 'app_yetti_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
-        $form = $this->createForm(YettiInputType::class, new YettiInput());
+        $form = $this->createForm(YettiFormType::class, new YettiForm());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $input = $form->getData();
-            $this->repository->save($input->toYetti());
+            $this->repository->save($form->getData());
             $this->addFlash('success', 'Yetti byl úspěšně přidán.');
 
             return $this->redirectToRoute('app_yetti_new');
@@ -44,7 +44,7 @@ final class YettiController extends AbstractController
 
         return $this->render('yetti/new.html.twig', [
             'form' => $form,
-            'yettis' => $this->repository->findRecent(5),
+            'yettis' => $this->repository->findRecent(),
         ]);
     }
 }

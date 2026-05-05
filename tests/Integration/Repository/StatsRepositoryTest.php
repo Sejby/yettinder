@@ -14,10 +14,13 @@ final class StatsRepositoryTest extends IntegrationTestCase
 {
     private StatsRepository $repository;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new StatsRepository($this->getConnection());
+        $this->repository = new StatsRepository($this->getConnection(), $this->getHydrator());
     }
 
     /**
@@ -28,22 +31,25 @@ final class StatsRepositoryTest extends IntegrationTestCase
         $this->assertSame([], $this->repository->getVotesByYear());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetVotesByYearGroupsAndAggregatesCorrectly(): void
     {
         $id = $this->insertYetti();
-        $this->insertVote($id, 'session-a', 1,  '2025-06-01 10:00:00');
+        $this->insertVote($id, 'session-a', 1, '2025-06-01 10:00:00');
         $this->insertVote($id, 'session-b', -1, '2025-06-02 10:00:00');
-        $this->insertVote($id, 'session-c', 1,  '2026-01-15 10:00:00');
+        $this->insertVote($id, 'session-c', 1, '2026-01-15 10:00:00');
 
         $rows = $this->repository->getVotesByYear();
 
         $this->assertCount(2, $rows);
 
         $this->assertSame('2026', $rows[0]->period);
-        $this->assertSame(1,  $rows[0]->total);
-        $this->assertSame(1,  $rows[0]->positive);
-        $this->assertSame(0,  $rows[0]->negative);
-        $this->assertSame(1,  $rows[0]->score);
+        $this->assertSame(1, $rows[0]->total);
+        $this->assertSame(1, $rows[0]->positive);
+        $this->assertSame(0, $rows[0]->negative);
+        $this->assertSame(1, $rows[0]->score);
 
         $this->assertSame('2025', $rows[1]->period);
         $this->assertSame(2, $rows[1]->total);
@@ -58,8 +64,8 @@ final class StatsRepositoryTest extends IntegrationTestCase
     public function testGetVotesByMonthGroupsByYearAndMonth(): void
     {
         $id = $this->insertYetti();
-        $this->insertVote($id, 'session-a', 1,  '2026-03-10 10:00:00');
-        $this->insertVote($id, 'session-b', 1,  '2026-04-05 10:00:00');
+        $this->insertVote($id, 'session-a', 1, '2026-03-10 10:00:00');
+        $this->insertVote($id, 'session-b', 1, '2026-04-05 10:00:00');
         $this->insertVote($id, 'session-c', -1, '2026-04-20 10:00:00');
 
         $rows = $this->repository->getVotesByMonth(24);
@@ -99,6 +105,9 @@ final class StatsRepositoryTest extends IntegrationTestCase
         $this->assertCount(30, $rows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetVotesByDayFillsMissingDaysWithZeros(): void
     {
         $id = $this->insertYetti();
@@ -117,12 +126,15 @@ final class StatsRepositoryTest extends IntegrationTestCase
         $this->assertCount(29, $zeroDays);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetVotesByDayAggregatesPositiveAndNegativeSeparately(): void
     {
-        $id    = $this->insertYetti();
+        $id = $this->insertYetti();
         $today = new \DateTimeImmutable()->format('Y-m-d H:i:s');
-        $this->insertVote($id, 'session-a', 1,  $today);
-        $this->insertVote($id, 'session-b', 1,  $today);
+        $this->insertVote($id, 'session-a', 1, $today);
+        $this->insertVote($id, 'session-b', 1, $today);
         $this->insertVote($id, 'session-c', -1, $today);
 
         $rows = $this->repository->getVotesByDay(7);
@@ -134,11 +146,13 @@ final class StatsRepositoryTest extends IntegrationTestCase
         $this->assertSame(1, $todayRow->negative);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetTopYettisByScoreOrdersByScoreDescending(): void
     {
         $idA = $this->insertYetti(name: 'Popular');
         $idB = $this->insertYetti(name: 'Disliked');
-        $idC = $this->insertYetti(name: 'Neutral');
 
         $this->insertVote($idA, 'session-1', 1);
         $this->insertVote($idA, 'session-2', 1);
@@ -146,9 +160,9 @@ final class StatsRepositoryTest extends IntegrationTestCase
 
         $rows = $this->repository->getTopYettisByScore(10);
 
-        $this->assertSame('Popular',  $rows[0]->name);
-        $this->assertSame(2,          $rows[0]->score);
-        $this->assertSame(2,          $rows[0]->voteCount);
+        $this->assertSame('Popular', $rows[0]->name);
+        $this->assertSame(2, $rows[0]->score);
+        $this->assertSame(2, $rows[0]->voteCount);
     }
 
     /**
@@ -165,6 +179,9 @@ final class StatsRepositoryTest extends IntegrationTestCase
         $this->assertSame(0, $rows[0]->voteCount);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetTopYettisByScoreRespectsLimit(): void
     {
         $this->insertYetti(name: 'A');

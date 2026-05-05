@@ -4,30 +4,25 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Kenny1911\DoctrineDbalHydrator\Mapping\Attribute\Column;
+
 class Yetti
 {
     public function __construct(
-        private ?int   $id,
-        private string $name,
-        private string $gender,
-        private int    $height,
-        private float  $weight,
-        private string $address,
-        private float  $rating,
+        #[Column] private int    $id,
+        #[Column] private string $name,
+        #[Column] private string $gender,
+        #[Column] private int    $height,
+        #[Column] private float  $weight,
+        #[Column] private string $address,
+        #[Column] private float  $rating,
     )
     {
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(?int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getName(): string

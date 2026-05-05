@@ -28,5 +28,16 @@ services:
     App\Repository\StatsRepositoryInterface:
         alias: App\Repository\StatsRepository
 
+    Kenny1911\DoctrineDbalHydrator\Mapping\AttributeLoader: ~
+
+    Kenny1911\DoctrineDbalHydrator\ObjectHydrator:
+        factory: [ 'Kenny1911\DoctrineDbalHydrator\ObjectHydrator', 'createByConnection' ]
+        arguments: [ '@Doctrine\DBAL\Connection' ]
+
+    Kenny1911\DoctrineDbalHydrator\Hydrator:
+        arguments:
+            $objectHydrator: '@Kenny1911\DoctrineDbalHydrator\ObjectHydrator'
+            $loader: '@Kenny1911\DoctrineDbalHydrator\Mapping\AttributeLoader'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

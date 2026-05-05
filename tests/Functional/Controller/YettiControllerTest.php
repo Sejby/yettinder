@@ -48,13 +48,13 @@ final class YettiControllerTest extends FunctionalTestCase
     public function testSubmitValidFormCreatesYettiAndRedirects(): void
     {
         $crawler = $this->client->request('GET', '/yetti/new');
-        $form    = $crawler->selectButton('Uložit Yettiho')->form([
-            'yetti_input[name]'    => 'Karel',
-            'yetti_input[gender]'  => 'male',
-            'yetti_input[height]'  => '182',
-            'yetti_input[weight]'  => '80',
-            'yetti_input[address]' => 'Brno',
-            'yetti_input[rating]'  => '4.0',
+        $form = $crawler->selectButton('Uložit Yettiho')->form([
+            'yetti_form[name]' => 'Karel',
+            'yetti_form[gender]' => 'male',
+            'yetti_form[height]' => '182',
+            'yetti_form[weight]' => '80',
+            'yetti_form[address]' => 'Brno',
+            'yetti_form[rating]' => '4.0',
         ]);
 
         $this->client->submit($form);
@@ -67,13 +67,13 @@ final class YettiControllerTest extends FunctionalTestCase
     public function testSubmitFormWithMissingNameShowsError(): void
     {
         $crawler = $this->client->request('GET', '/yetti/new');
-        $form    = $crawler->selectButton('Uložit Yettiho')->form([
-            'yetti_input[name]'    => '',
-            'yetti_input[gender]'  => 'male',
-            'yetti_input[height]'  => '175',
-            'yetti_input[weight]'  => '70',
-            'yetti_input[address]' => 'Praha',
-            'yetti_input[rating]'  => '3.0',
+        $form = $crawler->selectButton('Uložit Yettiho')->form([
+            'yetti_form[name]' => '',
+            'yetti_form[gender]' => 'male',
+            'yetti_form[height]' => '175',
+            'yetti_form[weight]' => '70',
+            'yetti_form[address]' => 'Praha',
+            'yetti_form[rating]' => '3.0',
         ]);
 
         $this->client->submit($form);
@@ -85,9 +85,9 @@ final class YettiControllerTest extends FunctionalTestCase
     public function testSubmitFormWithInvalidCsrfShowsError(): void
     {
         $this->client->request('POST', '/yetti/new', [
-            'yetti_input' => [
+            'yetti_form' => [
                 '_token' => 'invalid-token',
-                'name'   => 'Karel',
+                'name' => 'Karel',
                 'gender' => 'male',
             ],
         ]);

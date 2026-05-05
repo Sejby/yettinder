@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73b7def68ff522ef7937a21e974cd756",
+    "content-hash": "6d4f1f1990e6c57322ba496ffc86b73b",
     "packages": [
         {
             "name": "composer/semver",
@@ -1263,6 +1263,61 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "kenny1911/doctrine-dbal-hydrator",
+            "version": "0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Kenny1911/doctrine-dbal-hydrator.git",
+                "reference": "7abab273a3714fa222e21b3687dfa836c785d8a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Kenny1911/doctrine-dbal-hydrator/zipball/7abab273a3714fa222e21b3687dfa836c785d8a6",
+                "reference": "7abab273a3714fa222e21b3687dfa836c785d8a6",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^3.0 || ^4.0",
+                "ext-mbstring": "*",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^12.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kenny1911\\DoctrineDbalHydrator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kenny1911",
+                    "email": "o-muzyka@mail.ru"
+                }
+            ],
+            "description": "Convert doctrine dbal query result to dto",
+            "keywords": [
+                "convert",
+                "converter",
+                "dbal",
+                "doctrine",
+                "dto",
+                "hydrator",
+                "object",
+                "tool"
+            ],
+            "support": {
+                "issues": "https://github.com/Kenny1911/doctrine-dbal-hydrator/issues",
+                "source": "https://github.com/Kenny1911/doctrine-dbal-hydrator/tree/0.1.2"
+            },
+            "time": "2026-04-10T17:14:58+00:00"
         },
         {
             "name": "monolog/monolog",

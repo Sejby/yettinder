@@ -56,7 +56,7 @@ final class MatchControllerTest extends FunctionalTestCase
         $this->insertYetti(name: 'Jarda');
 
         $crawler = $this->client->request('GET', '/match');
-        $form    = $crawler->selectButton('Super!')->form();
+        $form = $crawler->selectButton('Super!')->form();
 
         $this->client->submit($form);
 
@@ -71,7 +71,7 @@ final class MatchControllerTest extends FunctionalTestCase
         $this->insertYetti(name: 'Jediny');
 
         $crawler = $this->client->request('GET', '/match');
-        $form    = $crawler->selectButton('Super!')->form();
+        $form = $crawler->selectButton('Super!')->form();
         $this->client->submit($form);
         $this->client->followRedirect();
 
@@ -87,7 +87,7 @@ final class MatchControllerTest extends FunctionalTestCase
 
         $this->client->request('POST', "/match/$id/vote", [
             '_token' => 'invalid-token',
-            'vote'   => '1',
+            'vote' => '1',
         ]);
 
         $this->assertResponseStatusCodeSame(403);
@@ -100,11 +100,11 @@ final class MatchControllerTest extends FunctionalTestCase
     {
         $this->insertYetti();
         $crawler = $this->client->request('GET', '/match');
-        $token   = $crawler->filter('input[name="_token"]')->first()->attr('value');
+        $token = $crawler->filter('input[name="_token"]')->first()->attr('value');
 
         $this->client->request('POST', '/match/9999/vote', [
             '_token' => $token,
-            'vote'   => '1',
+            'vote' => '1',
         ]);
 
         $this->assertResponseStatusCodeSame(404);
@@ -115,14 +115,14 @@ final class MatchControllerTest extends FunctionalTestCase
      */
     public function testVoteWithInvalidVoteValueReturns404(): void
     {
-        $id      = $this->insertYetti();
+        $id = $this->insertYetti();
         $crawler = $this->client->request('GET', '/match');
 
         $token = $crawler->filter('input[name="_token"]')->first()->attr('value');
 
         $this->client->request('POST', "/match/$id/vote", [
             '_token' => $token,
-            'vote'   => '999',
+            'vote' => '999',
         ]);
 
         $this->assertResponseStatusCodeSame(404);

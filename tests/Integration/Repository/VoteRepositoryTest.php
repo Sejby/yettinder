@@ -12,6 +12,9 @@ final class VoteRepositoryTest extends IntegrationTestCase
 {
     private VoteRepository $repository;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -68,13 +71,13 @@ final class VoteRepositoryTest extends IntegrationTestCase
         $yettiId = $this->insertYetti();
 
         $this->repository->save($yettiId, 'session-1', 1);
-        $this->repository->save($yettiId, 'session-1', -1); // Should not throw or overwrite.
+        $this->repository->save($yettiId, 'session-1', -1);
 
         $count = $this->getConnection()->fetchOne(
             'SELECT COUNT(*) FROM yetti_vote WHERE yetti_id = ? AND session_id = ?',
             [$yettiId, 'session-1'],
         );
 
-        $this->assertSame(1, (int) $count);
+        $this->assertSame(1, (int)$count);
     }
 }

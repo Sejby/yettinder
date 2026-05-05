@@ -9,11 +9,14 @@ use App\Dto\VoteDayStats;
 use App\Dto\VotePeriodStats;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\ParameterType;
+use Kenny1911\DoctrineDbalHydrator\Hydrator;
 
 final readonly class StatsRepository implements StatsRepositoryInterface
 {
-    public function __construct(private Connection $connection)
+    public function __construct(
+        private Connection $connection,
+        private Hydrator   $hydrator,
+    )
     {
     }
 
@@ -22,19 +25,20 @@ final readonly class StatsRepository implements StatsRepositoryInterface
      */
     public function getVotesByYear(): array
     {
-        $rows = $this->connection->fetchAllAssociative(
-            "SELECT
-                strftime('%Y', voted_at)                              AS period,
-                COUNT(*)                                              AS total,
-                SUM(CASE WHEN vote = 1  THEN 1 ELSE 0 END)           AS positive,
-                SUM(CASE WHEN vote = -1 THEN 1 ELSE 0 END)           AS negative,
-                SUM(vote)                                             AS score
-             FROM yetti_vote
-             GROUP BY period
-             ORDER BY period DESC",
-        );
+        $rows = $this->connection->createQueryBuilder()
+            ->select(
+                "strftime('%Y', voted_at) AS period",
+                'COUNT(*) AS total',
+                'SUM(CASE WHEN vote = 1 THEN 1 ELSE 0 END) AS positive',
+                'SUM(CASE WHEN vote = -1 THEN 1 ELSE 0 END) AS negative',
+                'SUM(vote) AS score',
+            )
+            ->from('yetti_vote')
+            ->groupBy('period')
+            ->orderBy('period', 'DESC')
+            ->fetchAllAssociative();
 
-        return array_map($this->hydratePeriod(...), $rows);
+        return array_values(array_map(fn($row) => $this->hydrator->hydrate(VotePeriodStats::class, $row), $rows));
     }
 
     /**
@@ -42,22 +46,21 @@ final readonly class StatsRepository implements StatsRepositoryInterface
      */
     public function getVotesByMonth(int $limit = 24): array
     {
-        $rows = $this->connection->fetchAllAssociative(
-            "SELECT
-                strftime('%Y-%m', voted_at)                          AS period,
-                COUNT(*)                                              AS total,
-                SUM(CASE WHEN vote = 1  THEN 1 ELSE 0 END)           AS positive,
-                SUM(CASE WHEN vote = -1 THEN 1 ELSE 0 END)           AS negative,
-                SUM(vote)                                             AS score
-             FROM yetti_vote
-             GROUP BY period
-             ORDER BY period DESC
-             LIMIT :limit",
-            ['limit' => $limit],
-            ['limit' => ParameterType::INTEGER],
-        );
+        $rows = $this->connection->createQueryBuilder()
+            ->select(
+                "strftime('%Y-%m', voted_at) AS period",
+                'COUNT(*) AS total',
+                'SUM(CASE WHEN vote = 1 THEN 1 ELSE 0 END) AS positive',
+                'SUM(CASE WHEN vote = -1 THEN 1 ELSE 0 END) AS negative',
+                'SUM(vote) AS score',
+            )
+            ->from('yetti_vote')
+            ->groupBy('period')
+            ->orderBy('period', 'DESC')
+            ->setMaxResults($limit)
+            ->fetchAllAssociative();
 
-        return array_map($this->hydratePeriod(...), $rows);
+        return array_values(array_map(fn($row) => $this->hydrator->hydrate(VotePeriodStats::class, $row), $rows));
     }
 
     /**
@@ -65,19 +68,20 @@ final readonly class StatsRepository implements StatsRepositoryInterface
      */
     public function getVotesByDay(int $days = 30): array
     {
-        $rows = $this->connection->fetchAllAssociative(
-            "SELECT
-                strftime('%Y-%m-%d', voted_at)                       AS period,
-                SUM(CASE WHEN vote = 1  THEN 1 ELSE 0 END)           AS positive,
-                SUM(CASE WHEN vote = -1 THEN 1 ELSE 0 END)           AS negative
-             FROM yetti_vote
-             WHERE voted_at >= date('now', :offset)
-             GROUP BY period
-             ORDER BY period",
-            ['offset' => sprintf('-%d days', $days - 1)],
-        );
+        $rows = $this->connection->createQueryBuilder()
+            ->select(
+                "strftime('%Y-%m-%d', voted_at) AS period",
+                'SUM(CASE WHEN vote = 1 THEN 1 ELSE 0 END) AS positive',
+                'SUM(CASE WHEN vote = -1 THEN 1 ELSE 0 END) AS negative',
+            )
+            ->from('yetti_vote')
+            ->where("voted_at >= date('now', :offset)")
+            ->setParameter('offset', sprintf('-%d days', $days - 1))
+            ->groupBy('period')
+            ->orderBy('period')
+            ->fetchAllAssociative();
 
-        return $this->fillMissingDays($rows, $days);
+        return $this->fillMissingDays(array_values($rows), $days);
     }
 
     /**
@@ -85,29 +89,23 @@ final readonly class StatsRepository implements StatsRepositoryInterface
      */
     public function getTopYettisByScore(int $limit = 10): array
     {
-        $rows = $this->connection->fetchAllAssociative(
-            "SELECT
-                y.id                                                  AS id,
-                y.name                                                AS name,
-                y.address                                             AS address,
-                COUNT(v.id)                                           AS vote_count,
-                COALESCE(SUM(v.vote), 0)                              AS score
-             FROM yetti y
-             LEFT JOIN yetti_vote v ON v.yetti_id = y.id
-             GROUP BY y.id
-             ORDER BY score DESC, vote_count DESC
-             LIMIT :limit",
-            ['limit' => $limit],
-            ['limit' => ParameterType::INTEGER],
-        );
+        $rows = $this->connection->createQueryBuilder()
+            ->select(
+                'y.id AS id',
+                'y.name AS name',
+                'y.address AS address',
+                'COUNT(v.id) AS vote_count',
+                'COALESCE(SUM(v.vote), 0) AS score',
+            )
+            ->from('yetti', 'y')
+            ->leftJoin('y', 'yetti_vote', 'v', 'v.yetti_id = y.id')
+            ->groupBy('y.id')
+            ->orderBy('score', 'DESC')
+            ->addOrderBy('vote_count', 'DESC')
+            ->setMaxResults($limit)
+            ->fetchAllAssociative();
 
-        return array_map(static fn(array $r) => new TopYetti(
-            id: (int)$r['id'],
-            name: (string)$r['name'],
-            address: (string)$r['address'],
-            voteCount: (int)$r['vote_count'],
-            score: (int)$r['score'],
-        ), $rows);
+        return array_values(array_map(fn($row) => $this->hydrator->hydrate(TopYetti::class, $row), $rows));
     }
 
     /**
@@ -132,17 +130,5 @@ final readonly class StatsRepository implements StatsRepositoryInterface
         }
 
         return $result;
-    }
-
-    /** @param array<string, mixed> $row */
-    private function hydratePeriod(array $row): VotePeriodStats
-    {
-        return new VotePeriodStats(
-            period: (string)$row['period'],
-            total: (int)$row['total'],
-            positive: (int)$row['positive'],
-            negative: (int)$row['negative'],
-            score: (int)$row['score'],
-        );
     }
 }

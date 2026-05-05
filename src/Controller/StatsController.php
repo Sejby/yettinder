@@ -15,8 +15,9 @@ final class StatsController extends AbstractController
 {
     public function __construct(
         private readonly StatsRepositoryInterface $stats,
-        private readonly ChartBuilderInterface $chartBuilder,
-    ) {
+        private readonly ChartBuilderInterface    $chartBuilder,
+    )
+    {
     }
 
     #[Route('/stats', name: 'app_stats')]
@@ -26,25 +27,25 @@ final class StatsController extends AbstractController
 
         $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
         $chart->setData([
-            'labels'   => array_column($byDay, 'period'),
+            'labels' => array_column($byDay, 'period'),
             'datasets' => [
                 [
-                    'label'           => '👍',
-                    'data'            => array_column($byDay, 'positive'),
+                    'label' => '👍',
+                    'data' => array_column($byDay, 'positive'),
                     'backgroundColor' => 'rgba(0, 255, 0, 1)',
-                    'borderRadius'    => 10,
+                    'borderRadius' => 10,
                 ],
                 [
-                    'label'           => '👎',
-                    'data'            => array_column($byDay, 'negative'),
+                    'label' => '👎',
+                    'data' => array_column($byDay, 'negative'),
                     'backgroundColor' => 'rgba(255, 0, 0, 1)',
-                    'borderRadius'    => 10,
+                    'borderRadius' => 10,
                 ],
             ],
         ]);
         $chart->setOptions([
             'responsive' => true,
-            'scales'     => [
+            'scales' => [
                 'x' => ['stacked' => false, 'grid' => ['display' => false]],
                 'y' => ['beginAtZero' => true, 'ticks' => ['stepSize' => 1]],
             ],
@@ -54,10 +55,10 @@ final class StatsController extends AbstractController
         ]);
 
         return $this->render('stats/index.html.twig', [
-            'byYear'  => $this->stats->getVotesByYear(),
-            'byMonth' => $this->stats->getVotesByMonth(24),
-            'top'     => $this->stats->getTopYettisByScore(10),
-            'chart'   => $chart,
+            'byYear' => $this->stats->getVotesByYear(),
+            'byMonth' => $this->stats->getVotesByMonth(),
+            'top' => $this->stats->getTopYettisByScore(),
+            'chart' => $chart,
         ]);
     }
 }

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Entity\Yetti;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class YettiInput
+final class YettiForm
 {
     #[Assert\NotBlank(message: 'Jméno je povinné.', normalizer: 'trim')]
     #[Assert\Length(max: 100, maxMessage: 'Jméno může mít nejvýše 100 znaků.')]
@@ -40,17 +39,4 @@ final class YettiInput
         max: 5.0,
     )]
     public float $rating = 0.0;
-
-    public function toYetti(): Yetti
-    {
-        return new Yetti(
-            id: null,
-            name: trim($this->name),
-            gender: $this->gender,
-            height: $this->height,
-            weight: $this->weight,
-            address: trim($this->address),
-            rating: $this->rating,
-        );
-    }
 }

@@ -23,7 +23,7 @@ final class MatchingServiceTest extends TestCase
     public function testFindMatchDelegatesToRepositoriesInOrder(): void
     {
         $votedIds = [1, 2];
-        $match    = $this->makeMatch();
+        $match = $this->makeMatch();
 
         $voteRepo = $this->createMock(VoteRepositoryInterface::class);
         $voteRepo->expects($this->once())

@@ -7,11 +7,25 @@ namespace App\Tests\Integration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
+use Kenny1911\DoctrineDbalHydrator\Hydrator;
+use Kenny1911\DoctrineDbalHydrator\Mapping\AttributeLoader;
+use Kenny1911\DoctrineDbalHydrator\ObjectHydrator;
 use PHPUnit\Framework\TestCase;
 
 abstract class IntegrationTestCase extends TestCase
 {
     private static ?Connection $connection = null;
+
+    /**
+     * @throws Exception
+     */
+    protected function getHydrator(): Hydrator
+    {
+        return new Hydrator(
+            ObjectHydrator::createByConnection($this->getConnection()),
+            new AttributeLoader(),
+        );
+    }
 
     /**
      * @throws Exception
@@ -74,15 +88,16 @@ abstract class IntegrationTestCase extends TestCase
     protected function insertYetti(
         string $name = 'Test',
         string $gender = 'male',
-        int $height = 175,
-        float $weight = 70.0,
+        int    $height = 175,
+        float  $weight = 70.0,
         string $address = 'Praha',
-        float $rating = 3.0,
-    ): int {
+        float  $rating = 3.0,
+    ): int
+    {
         $conn = $this->getConnection();
         $conn->insert('yetti', compact('name', 'gender', 'height', 'weight', 'address', 'rating'));
 
-        return (int) $conn->lastInsertId();
+        return (int)$conn->lastInsertId();
     }
 
     /**
@@ -91,10 +106,10 @@ abstract class IntegrationTestCase extends TestCase
     protected function insertVote(int $yettiId, string $sessionId, int $vote, string $votedAt = ''): void
     {
         $this->getConnection()->insert('yetti_vote', [
-            'yetti_id'   => $yettiId,
+            'yetti_id' => $yettiId,
             'session_id' => $sessionId,
-            'vote'       => $vote,
-            'voted_at'   => $votedAt !== '' ? $votedAt : (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+            'vote' => $vote,
+            'voted_at' => $votedAt !== '' ? $votedAt : new \DateTimeImmutable()->format('Y-m-d H:i:s'),
         ]);
     }
 }
