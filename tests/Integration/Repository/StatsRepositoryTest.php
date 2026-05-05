@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Repository;
 
+use App\Dto\VoteDayStats;
+use App\Dto\VotePeriodStats;
 use App\Repository\StatsRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\DBAL\Exception;
@@ -37,17 +39,17 @@ final class StatsRepositoryTest extends IntegrationTestCase
 
         $this->assertCount(2, $rows);
 
-        $this->assertSame('2026', $rows[0]['period']);
-        $this->assertSame(1,  $rows[0]['total']);
-        $this->assertSame(1,  $rows[0]['positive']);
-        $this->assertSame(0,  $rows[0]['negative']);
-        $this->assertSame(1,  $rows[0]['score']);
+        $this->assertSame('2026', $rows[0]->period);
+        $this->assertSame(1,  $rows[0]->total);
+        $this->assertSame(1,  $rows[0]->positive);
+        $this->assertSame(0,  $rows[0]->negative);
+        $this->assertSame(1,  $rows[0]->score);
 
-        $this->assertSame('2025', $rows[1]['period']);
-        $this->assertSame(2, $rows[1]['total']);
-        $this->assertSame(1, $rows[1]['positive']);
-        $this->assertSame(1, $rows[1]['negative']);
-        $this->assertSame(0, $rows[1]['score']);
+        $this->assertSame('2025', $rows[1]->period);
+        $this->assertSame(2, $rows[1]->total);
+        $this->assertSame(1, $rows[1]->positive);
+        $this->assertSame(1, $rows[1]->negative);
+        $this->assertSame(0, $rows[1]->score);
     }
 
     /**
@@ -62,15 +64,16 @@ final class StatsRepositoryTest extends IntegrationTestCase
 
         $rows = $this->repository->getVotesByMonth(24);
 
+        /** @var array<string, VotePeriodStats> $byPeriod */
         $byPeriod = array_column($rows, null, 'period');
         $this->assertArrayHasKey('2026-03', $byPeriod);
         $this->assertArrayHasKey('2026-04', $byPeriod);
 
         $april = $byPeriod['2026-04'];
-        $this->assertSame(2, $april['total']);
-        $this->assertSame(1, $april['positive']);
-        $this->assertSame(1, $april['negative']);
-        $this->assertSame(0, $april['score']);
+        $this->assertSame(2, $april->total);
+        $this->assertSame(1, $april->positive);
+        $this->assertSame(1, $april->negative);
+        $this->assertSame(0, $april->score);
     }
 
     /**
@@ -102,14 +105,15 @@ final class StatsRepositoryTest extends IntegrationTestCase
         $today = new \DateTimeImmutable()->format('Y-m-d H:i:s');
         $this->insertVote($id, 'session-a', 1, $today);
 
-        $rows     = $this->repository->getVotesByDay(30);
+        $rows = $this->repository->getVotesByDay(30);
+        /** @var array<string, VoteDayStats> $byPeriod */
         $byPeriod = array_column($rows, null, 'period');
 
         $todayKey = new \DateTimeImmutable()->format('Y-m-d');
-        $this->assertSame(1, $byPeriod[$todayKey]['positive']);
-        $this->assertSame(0, $byPeriod[$todayKey]['negative']);
+        $this->assertSame(1, $byPeriod[$todayKey]->positive);
+        $this->assertSame(0, $byPeriod[$todayKey]->negative);
 
-        $zeroDays = array_filter($rows, static fn(array $r) => $r['positive'] === 0 && $r['negative'] === 0);
+        $zeroDays = array_filter($rows, static fn(VoteDayStats $r) => $r->positive === 0 && $r->negative === 0);
         $this->assertCount(29, $zeroDays);
     }
 
@@ -124,10 +128,10 @@ final class StatsRepositoryTest extends IntegrationTestCase
         $rows = $this->repository->getVotesByDay(7);
 
         $todayKey = new \DateTimeImmutable()->format('Y-m-d');
-        $todayRow = array_values(array_filter($rows, static fn(array $r) => $r['period'] === $todayKey))[0];
+        $todayRow = array_values(array_filter($rows, static fn(VoteDayStats $r) => $r->period === $todayKey))[0];
 
-        $this->assertSame(2, $todayRow['positive']);
-        $this->assertSame(1, $todayRow['negative']);
+        $this->assertSame(2, $todayRow->positive);
+        $this->assertSame(1, $todayRow->negative);
     }
 
     public function testGetTopYettisByScoreOrdersByScoreDescending(): void
@@ -142,9 +146,9 @@ final class StatsRepositoryTest extends IntegrationTestCase
 
         $rows = $this->repository->getTopYettisByScore(10);
 
-        $this->assertSame('Popular',  $rows[0]['name']);
-        $this->assertSame(2,          $rows[0]['score']);
-        $this->assertSame(2,          $rows[0]['vote_count']);
+        $this->assertSame('Popular',  $rows[0]->name);
+        $this->assertSame(2,          $rows[0]->score);
+        $this->assertSame(2,          $rows[0]->voteCount);
     }
 
     /**
@@ -157,8 +161,8 @@ final class StatsRepositoryTest extends IntegrationTestCase
         $rows = $this->repository->getTopYettisByScore(10);
 
         $this->assertCount(1, $rows);
-        $this->assertSame(0, $rows[0]['score']);
-        $this->assertSame(0, $rows[0]['vote_count']);
+        $this->assertSame(0, $rows[0]->score);
+        $this->assertSame(0, $rows[0]->voteCount);
     }
 
     public function testGetTopYettisByScoreRespectsLimit(): void

@@ -16,7 +16,8 @@ final class YettiController extends AbstractController
 {
     public function __construct(
         private readonly YettiRepositoryInterface $repository,
-    ) {
+    )
+    {
     }
 
     #[Route('/', name: 'app_home')]
@@ -30,7 +31,7 @@ final class YettiController extends AbstractController
     #[Route('/yetti/new', name: 'app_yetti_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
-        $form = $this->createForm(YettiInputType::class);
+        $form = $this->createForm(YettiInputType::class, new YettiInput());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

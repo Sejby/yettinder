@@ -10,8 +10,9 @@ final readonly class YettiMatch
 {
     public function __construct(
         public Yetti $yetti,
-        public int $voteScore,
-        public int $voteCount,
-    ) {
+        public int   $voteScore,
+        public int   $voteCount,
+    )
+    {
     }
 }

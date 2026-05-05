@@ -3,46 +3,46 @@
 {% block title %}Nový Yetti{% endblock %}
 
 {% block body %}
-<nav class="navbar navbar-light border-bottom bg-white">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">🏔️ Yettinder</a>
-        <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_stats') }}">Statistiky</a>
-    </div>
-</nav>
-
-<div class="container py-5">
-    <div class="row g-4">
-
-        <div class="col-md-5">
-            <h1 class="h3 mb-1">Přidat nového Yettiho</h1>
-            <p class="text-muted mb-4">Vyplň základní informace.</p>
-
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
-
-            {{ form_start(form) }}
-            {{ form_errors(form) }}
-            {{ form_row(form.name) }}
-            {{ form_row(form.gender) }}
-            {{ form_row(form.height) }}
-            {{ form_row(form.weight) }}
-            {{ form_row(form.address) }}
-            {{ form_row(form.rating) }}
-            <div class="mt-4">
-                <button class="btn btn-dark" type="submit">Uložit Yettiho</button>
-            </div>
-            {{ form_end(form) }}
+    <nav class="navbar navbar-light border-bottom bg-white">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">🏔️ Yettinder</a>
+            <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_stats') }}">Statistiky</a>
         </div>
+    </nav>
 
-        <div class="col-md-7">
-            <h2 class="h5 mb-3">Poslední Yetti</h2>
-            {% if yettis is empty %}
-                <p class="text-muted">Zatím žádný Yetti.</p>
-            {% else %}
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover align-middle">
-                        <thead class="table-light">
+    <div class="container py-5">
+        <div class="row g-4">
+
+            <div class="col-md-5">
+                <h1 class="h3 mb-1">Přidat nového Yettiho</h1>
+                <p class="text-muted mb-4">Vyplň základní informace.</p>
+
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.gender) }}
+                {{ form_row(form.height) }}
+                {{ form_row(form.weight) }}
+                {{ form_row(form.address) }}
+                {{ form_row(form.rating) }}
+                <div class="mt-4">
+                    <button class="btn btn-dark" type="submit">Uložit Yettiho</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+
+            <div class="col-md-7">
+                <h2 class="h5 mb-3">Poslední Yetti</h2>
+                {% if yettis is empty %}
+                    <p class="text-muted">Zatím žádný Yetti.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light">
                             <tr>
                                 <th>Jméno</th>
                                 <th>Pohlaví</th>
@@ -51,8 +51,8 @@
                                 <th>Bydliště</th>
                                 <th>Hodnocení</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             {% for yetti in yettis %}
                                 <tr>
                                     <td>{{ yetti.name }}</td>
@@ -63,12 +63,12 @@
                                     <td>{{ yetti.rating }}</td>
                                 </tr>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-        </div>
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
 
+        </div>
     </div>
-</div>
 {% endblock %}

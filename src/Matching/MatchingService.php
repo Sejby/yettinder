@@ -13,7 +13,8 @@ final readonly class MatchingService
     public function __construct(
         private YettiRepositoryInterface $yettiRepository,
         private VoteRepositoryInterface  $voteRepository,
-    ) {
+    )
+    {
     }
 
     public function findMatch(string $sessionId): ?YettiMatch

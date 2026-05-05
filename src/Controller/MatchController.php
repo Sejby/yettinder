@@ -15,9 +15,10 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MatchController extends AbstractController
 {
     public function __construct(
-        private readonly MatchingService $matchingService,
+        private readonly MatchingService          $matchingService,
         private readonly YettiRepositoryInterface $yettiRepository,
-    ) {
+    )
+    {
     }
 
     #[Route('/match', name: 'app_match')]
@@ -27,7 +28,7 @@ final class MatchController extends AbstractController
         $match = $this->matchingService->findMatch($sessionId);
 
         return $this->render('match/index.html.twig', [
-            'match'    => $match,
+            'match' => $match,
             'allRated' => $match === null && $this->yettiRepository->findTopRated(1) !== [],
         ]);
     }
@@ -35,7 +36,7 @@ final class MatchController extends AbstractController
     #[Route('/match/{id}/vote', name: 'app_match_vote', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function vote(int $id, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('vote_yetti', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('vote_yetti', (string)$request->request->get('_token'))) {
             throw new AccessDeniedHttpException('Neplatný bezpečnostní token.');
         }
 
@@ -43,7 +44,7 @@ final class MatchController extends AbstractController
             throw $this->createNotFoundException('Yetti nenalezen.');
         }
 
-        $vote = (int) $request->request->get('vote');
+        $vote = (int)$request->request->get('vote');
         if (!in_array($vote, [-1, 1], true)) {
             throw $this->createNotFoundException('Neplatná hodnota hlasu.');
         }

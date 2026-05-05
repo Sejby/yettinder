@@ -7,14 +7,15 @@ namespace App\Entity;
 class Yetti
 {
     public function __construct(
-        private ?int $id,
+        private ?int   $id,
         private string $name,
         private string $gender,
-        private int $height,
-        private float $weight,
+        private int    $height,
+        private float  $weight,
         private string $address,
-        private float $rating,
-    ) {
+        private float  $rating,
+    )
+    {
     }
 
     public function getId(): ?int

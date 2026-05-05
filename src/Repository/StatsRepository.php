@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Dto\TopYetti;
+use App\Dto\VoteDayStats;
+use App\Dto\VotePeriodStats;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
@@ -31,7 +34,7 @@ final readonly class StatsRepository implements StatsRepositoryInterface
              ORDER BY period DESC",
         );
 
-        return array_map($this->normalizeRow(...), $rows);
+        return array_map($this->hydratePeriod(...), $rows);
     }
 
     /**
@@ -54,7 +57,7 @@ final readonly class StatsRepository implements StatsRepositoryInterface
             ['limit' => ParameterType::INTEGER],
         );
 
-        return array_map($this->normalizeRow(...), $rows);
+        return array_map($this->hydratePeriod(...), $rows);
     }
 
     /**
@@ -98,18 +101,18 @@ final readonly class StatsRepository implements StatsRepositoryInterface
             ['limit' => ParameterType::INTEGER],
         );
 
-        return array_map(static fn(array $r) => [
-            'id'         => (int) $r['id'],
-            'name'       => (string) $r['name'],
-            'address'    => (string) $r['address'],
-            'vote_count' => (int) $r['vote_count'],
-            'score'      => (int) $r['score'],
-        ], $rows);
+        return array_map(static fn(array $r) => new TopYetti(
+            id: (int)$r['id'],
+            name: (string)$r['name'],
+            address: (string)$r['address'],
+            voteCount: (int)$r['vote_count'],
+            score: (int)$r['score'],
+        ), $rows);
     }
 
     /**
      * @param list<array<string, mixed>> $rows
-     * @return list<array{period: string, positive: int, negative: int}>
+     * @return list<VoteDayStats>
      */
     private function fillMissingDays(array $rows, int $days): array
     {
@@ -121,28 +124,25 @@ final readonly class StatsRepository implements StatsRepositoryInterface
         $result = [];
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = new \DateTimeImmutable("$i days ago")->format('Y-m-d');
-            $result[] = [
-                'period'   => $date,
-                'positive' => (int) ($indexed[$date]['positive'] ?? 0),
-                'negative' => (int) ($indexed[$date]['negative'] ?? 0),
-            ];
+            $result[] = new VoteDayStats(
+                period: $date,
+                positive: (int)($indexed[$date]['positive'] ?? 0),
+                negative: (int)($indexed[$date]['negative'] ?? 0),
+            );
         }
 
         return $result;
     }
 
-    /**
-     * @param array<string, mixed> $row
-     * @return array{period: string, total: int, positive: int, negative: int, score: int}
-     */
-    private function normalizeRow(array $row): array
+    /** @param array<string, mixed> $row */
+    private function hydratePeriod(array $row): VotePeriodStats
     {
-        return [
-            'period'   => (string) $row['period'],
-            'total'    => (int) $row['total'],
-            'positive' => (int) $row['positive'],
-            'negative' => (int) $row['negative'],
-            'score'    => (int) $row['score'],
-        ];
+        return new VotePeriodStats(
+            period: (string)$row['period'],
+            total: (int)$row['total'],
+            positive: (int)$row['positive'],
+            negative: (int)$row['negative'],
+            score: (int)$row['score'],
+        );
     }
 }

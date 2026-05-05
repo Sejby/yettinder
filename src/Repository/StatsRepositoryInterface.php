@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Dto\TopYetti;
+use App\Dto\VoteDayStats;
+use App\Dto\VotePeriodStats;
+
 interface StatsRepositoryInterface
 {
-    /** @return list<array{period: string, total: int, positive: int, negative: int, score: int}> */
+    /** @return list<VotePeriodStats> */
     public function getVotesByYear(): array;
 
-    /** @return list<array{period: string, total: int, positive: int, negative: int, score: int}> */
+    /** @return list<VotePeriodStats> */
     public function getVotesByMonth(int $limit = 24): array;
 
-    /** @return list<array{period: string, positive: int, negative: int}> */
+    /** @return list<VoteDayStats> */
     public function getVotesByDay(int $days = 30): array;
 
-    /** @return list<array{id: int, name: string, address: string, vote_count: int, score: int}> */
+    /** @return list<TopYetti> */
     public function getTopYettisByScore(int $limit = 10): array;
 }

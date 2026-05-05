@@ -3,33 +3,34 @@
 {% block title %}Yettinder{% endblock %}
 
 {% block body %}
-<nav class="navbar navbar-light border-bottom bg-white">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">🏔️ Yettinder</a>
-        <div class="d-flex gap-2">
-            <a class="btn btn-sm btn-dark" href="{{ path('app_match') }}">Najít match</a>
-            <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_yetti_new') }}">+ Přidat Yetiho</a>
-            <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_stats') }}">Statistiky</a>
+    <nav class="navbar navbar-light border-bottom bg-white">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">🏔️ Yettinder</a>
+            <div class="d-flex gap-2">
+                <a class="btn btn-sm btn-dark" href="{{ path('app_match') }}">Najít match</a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_yetti_new') }}">+ Přidat Yetiho</a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_stats') }}">Statistiky</a>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="container py-5">
+    <div class="container py-5">
 
-    <div class="mb-5">
-        <h1 class="h2 mb-2">Yettinder</h1>
-        <p class="text-muted mb-4">Ten pravý Yetti na tebe právě čeká.</p>
-        <a class="btn btn-dark" href="{{ path('app_match') }}">Najít si Yettiho</a>
-        <a class="btn btn-outline-secondary ms-2" href="{{ path('app_yetti_new') }}">Přidat Yettiho</a>
-    </div>
+        <div class="mb-5">
+            <h1 class="h2 mb-2">Yettinder</h1>
+            <p class="text-muted mb-4">Ten pravý Yetti na tebe právě čeká.</p>
+            <a class="btn btn-dark" href="{{ path('app_match') }}">Najít si Yettiho</a>
+            <a class="btn btn-outline-secondary ms-2" href="{{ path('app_yetti_new') }}">Přidat Yettiho</a>
+        </div>
 
-    <h2 class="h5 mb-3">Nejlépe hodnocení Yettiové</h2>
-    {% if yettis is empty %}
-        <p class="text-muted">Zatím zde není žádný Yetti. <a href="{{ path('app_yetti_new') }}">Přidej prvního!</a></p>
-    {% else %}
-        <div class="table-responsive">
-            <table class="table table-sm align-middle">
-                <thead class="table-light">
+        <h2 class="h5 mb-3">Nejlépe hodnocení Yettiové</h2>
+        {% if yettis is empty %}
+            <p class="text-muted">Zatím zde není žádný Yetti. <a href="{{ path('app_yetti_new') }}">Přidej prvního!</a>
+            </p>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead class="table-light">
                     <tr>
                         <th>#</th>
                         <th>Jméno</th>
@@ -39,8 +40,8 @@
                         <th>Bydliště</th>
                         <th>Hodnocení</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     {% for yetti in yettis %}
                         <tr>
                             <td class="text-muted">{{ loop.index }}</td>
@@ -52,14 +53,14 @@
                             <td>{{ yetti.rating }}</td>
                         </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
 
-</div>
+    </div>
 
-<footer class="border-top text-center py-3 text-muted small">
-    &copy; {{ "now"|date("Y") }} Yettinder
-</footer>
+    <footer class="border-top text-center py-3 text-muted small">
+        &copy; {{ "now"|date("Y") }} Yettinder
+    </footer>
 {% endblock %}

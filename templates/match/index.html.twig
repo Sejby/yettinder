@@ -3,95 +3,103 @@
 {% block title %}Tvůj match | Yettinder{% endblock %}
 
 {% block body %}
-<nav class="navbar navbar-light border-bottom bg-white">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">🏔️ Yettinder</a>
-        <div class="d-flex gap-2">
-            <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_stats') }}">Statistiky</a>
-            <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_yetti_new') }}">+ Přidat Yetiho</a>
+    <nav class="navbar navbar-light border-bottom bg-white">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">🏔️ Yettinder</a>
+            <div class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_stats') }}">Statistiky</a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_yetti_new') }}">+ Přidat Yetiho</a>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
 
-            {% if match is null and allRated %}
-                <div class="text-center py-5">
-                    <p class="fs-1">🎉</p>
-                    <h2 class="h4 mb-2">Prošel jsi všechny Yetti!</h2>
-                    <p class="text-muted mb-4">Zatím tu není nikdo nový. Až přibude další Yetti, zobrazíme ti ho.</p>
-                    <div class="d-flex justify-content-center gap-2 flex-wrap">
-                        <a class="btn btn-dark" href="{{ path('app_yetti_new') }}">Přidat nového Yettiho</a>
-                        <a class="btn btn-outline-secondary" href="{{ path('app_stats') }}">Prohlédnout statistiky</a>
+                {% if match is null and allRated %}
+                    <div class="text-center py-5">
+                        <p class="fs-1">🎉</p>
+                        <h2 class="h4 mb-2">Prošel jsi všechny Yetti!</h2>
+                        <p class="text-muted mb-4">Zatím tu není nikdo nový. Až přibude další Yetti, zobrazíme ti
+                            ho.</p>
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            <a class="btn btn-dark" href="{{ path('app_yetti_new') }}">Přidat nového Yettiho</a>
+                            <a class="btn btn-outline-secondary" href="{{ path('app_stats') }}">Prohlédnout
+                                statistiky</a>
+                        </div>
                     </div>
-                </div>
-            {% elseif match is null %}
-                <div class="text-center py-5">
-                    <p class="fs-1">🏔️</p>
-                    <h2 class="h4 mb-3">Zatím tu žádný Yetti není.</h2>
-                    <a class="btn btn-dark" href="{{ path('app_yetti_new') }}">Přidat prvního Yettiho</a>
-                </div>
-            {% else %}
+                {% elseif match is null %}
+                    <div class="text-center py-5">
+                        <p class="fs-1">🏔️</p>
+                        <h2 class="h4 mb-3">Zatím tu žádný Yetti není.</h2>
+                        <a class="btn btn-dark" href="{{ path('app_yetti_new') }}">Přidat prvního Yettiho</a>
+                    </div>
+                {% else %}
 
-                <h1 class="h4 mb-4 text-center text-muted">Kdo je tvůj match?</h1>
+                    <h1 class="h4 mb-4 text-center text-muted">Kdo je tvůj match?</h1>
 
-                <div class="card">
-                    <div class="card-body p-4">
+                    <div class="card">
+                        <div class="card-body p-4">
 
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div>
-                                <h2 class="h3 mb-0 fw-bold">{{ match.yetti.name }}</h2>
-                                <span class="text-muted">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h2 class="h3 mb-0 fw-bold">{{ match.yetti.name }}</h2>
+                                    <span class="text-muted">
                                     {% if match.yetti.gender == 'male' %}Muž
                                     {% elseif match.yetti.gender == 'female' %}Žena
                                     {% else %}Jiné
                                     {% endif %}
                                 </span>
-                            </div>
-                            <div class="text-end">
-                                <div class="fs-5 fw-bold {% if match.voteScore > 0 %}text-success{% elseif match.voteScore < 0 %}text-danger{% else %}text-muted{% endif %}">
-                                    {% if match.voteScore > 0 %}+{% endif %}{{ match.voteScore }}
                                 </div>
-                                <small class="text-muted">{{ match.voteCount }} {{ match.voteCount == 1 ? 'hlas' : (match.voteCount in [2,3,4] ? 'hlasy' : 'hlasů') }}</small>
+                                <div class="text-end">
+                                    <div
+                                        class="fs-5 fw-bold {% if match.voteScore > 0 %}text-success{% elseif match.voteScore < 0 %}text-danger{% else %}text-muted{% endif %}">
+                                        {% if match.voteScore > 0 %}+{% endif %}{{ match.voteScore }}
+                                    </div>
+                                    <small
+                                        class="text-muted">{{ match.voteCount }} {{ match.voteCount == 1 ? 'hlas' : (match.voteCount in [2,3,4] ? 'hlasy' : 'hlasů') }}</small>
+                                </div>
                             </div>
+
+                            <ul class="list-unstyled mb-4">
+                                <li class="py-2 border-bottom"><span class="text-muted me-2">Výška</span>
+                                    <strong>{{ match.yetti.height }} cm</strong></li>
+                                <li class="py-2 border-bottom"><span class="text-muted me-2">Váha</span>
+                                    <strong>{{ match.yetti.weight }} kg</strong></li>
+                                <li class="py-2 border-bottom"><span class="text-muted me-2">Bydliště</span>
+                                    <strong>{{ match.yetti.address }}</strong></li>
+                                <li class="py-2"><span class="text-muted me-2">Vstupní hodnocení</span>
+                                    <strong>{{ match.yetti.rating }}/5</strong></li>
+                            </ul>
+
+                            <div class="d-flex gap-3 justify-content-center">
+                                <form method="post" action="{{ path('app_match_vote', {id: match.yetti.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('vote_yetti') }}">
+                                    <input type="hidden" name="vote" value="-1">
+                                    <button type="submit" class="btn btn-outline-danger btn-lg px-4">
+                                        👎 Pas
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ path('app_match_vote', {id: match.yetti.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('vote_yetti') }}">
+                                    <input type="hidden" name="vote" value="1">
+                                    <button type="submit" class="btn btn-success btn-lg px-4">
+                                        👍 Super!
+                                    </button>
+                                </form>
+                            </div>
+
                         </div>
-
-                        <ul class="list-unstyled mb-4">
-                            <li class="py-2 border-bottom"><span class="text-muted me-2">Výška</span> <strong>{{ match.yetti.height }} cm</strong></li>
-                            <li class="py-2 border-bottom"><span class="text-muted me-2">Váha</span> <strong>{{ match.yetti.weight }} kg</strong></li>
-                            <li class="py-2 border-bottom"><span class="text-muted me-2">Bydliště</span> <strong>{{ match.yetti.address }}</strong></li>
-                            <li class="py-2"><span class="text-muted me-2">Vstupní hodnocení</span> <strong>{{ match.yetti.rating }}/5</strong></li>
-                        </ul>
-
-                        <div class="d-flex gap-3 justify-content-center">
-                            <form method="post" action="{{ path('app_match_vote', {id: match.yetti.id}) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('vote_yetti') }}">
-                                <input type="hidden" name="vote" value="-1">
-                                <button type="submit" class="btn btn-outline-danger btn-lg px-4">
-                                    👎 Pas
-                                </button>
-                            </form>
-                            <form method="post" action="{{ path('app_match_vote', {id: match.yetti.id}) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('vote_yetti') }}">
-                                <input type="hidden" name="vote" value="1">
-                                <button type="submit" class="btn btn-success btn-lg px-4">
-                                    👍 Super!
-                                </button>
-                            </form>
-                        </div>
-
                     </div>
-                </div>
 
-                <p class="text-center text-muted mt-3 small">
-                    Po hlasování se zobrazí další Yetti.
-                </p>
+                    <p class="text-center text-muted mt-3 small">
+                        Po hlasování se zobrazí další Yetti.
+                    </p>
 
-            {% endif %}
+                {% endif %}
 
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}

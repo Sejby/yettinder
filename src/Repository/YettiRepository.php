@@ -74,15 +74,15 @@ final readonly class YettiRepository implements YettiRepositoryInterface
 
         return new YettiMatch(
             yetti: $this->hydrate($row),
-            voteScore: (int) $row['vote_score'],
-            voteCount: (int) $row['vote_count'],
+            voteScore: (int)$row['vote_score'],
+            voteCount: (int)$row['vote_count'],
         );
     }
 
     /** @throws Exception */
     public function exists(int $id): bool
     {
-        return (bool) $this->connection->fetchOne(
+        return (bool)$this->connection->fetchOne(
             'SELECT 1 FROM yetti WHERE id = ?',
             [$id],
         );
@@ -92,25 +92,26 @@ final readonly class YettiRepository implements YettiRepositoryInterface
     public function save(Yetti $yetti): void
     {
         $this->connection->insert('yetti', [
-            'name'    => $yetti->getName(),
-            'gender'  => $yetti->getGender(),
-            'height'  => $yetti->getHeight(),
-            'weight'  => $yetti->getWeight(),
+            'name' => $yetti->getName(),
+            'gender' => $yetti->getGender(),
+            'height' => $yetti->getHeight(),
+            'weight' => $yetti->getWeight(),
             'address' => $yetti->getAddress(),
-            'rating'  => $yetti->getRating(),
+            'rating' => $yetti->getRating(),
         ]);
     }
 
+    /** @param array<string, mixed> $row */
     private function hydrate(array $row): Yetti
     {
         return new Yetti(
-            id:      (int)   $row['id'],
-            name:    (string) $row['name'],
-            gender:  (string) $row['gender'],
-            height:  (int)   $row['height'],
-            weight:  (float) $row['weight'],
-            address: (string) $row['address'],
-            rating:  (float) $row['rating'],
+            id: (int)$row['id'],
+            name: (string)$row['name'],
+            gender: (string)$row['gender'],
+            height: (int)$row['height'],
+            weight: (float)$row['weight'],
+            address: (string)$row['address'],
+            rating: (float)$row['rating'],
         );
     }
 }
