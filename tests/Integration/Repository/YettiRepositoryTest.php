@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Repository;
 
-use App\Entity\Yetti;
+use App\Dto\YettiForm;
 use App\Repository\YettiRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\DBAL\Exception;
@@ -13,10 +13,13 @@ final class YettiRepositoryTest extends IntegrationTestCase
 {
     private YettiRepository $repository;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new YettiRepository($this->getConnection());
+        $this->repository = new YettiRepository($this->getConnection(), $this->getHydrator());
     }
 
     /**
@@ -24,8 +27,14 @@ final class YettiRepositoryTest extends IntegrationTestCase
      */
     public function testSavePersistsYetti(): void
     {
-        $yetti = new Yetti(null, 'Mira', 'female', 165, 58.0, 'Brno', 4.5);
-        $this->repository->save($yetti);
+        $form = new YettiForm();
+        $form->name = 'Mira';
+        $form->gender = 'female';
+        $form->height = 165;
+        $form->weight = 58.0;
+        $form->address = 'Brno';
+        $form->rating = 4.5;
+        $this->repository->save($form);
 
         $results = $this->repository->findTopRated(10);
 
@@ -39,15 +48,15 @@ final class YettiRepositoryTest extends IntegrationTestCase
      */
     public function testFindTopRatedOrdersByRatingDescending(): void
     {
-        $this->insertYetti(name: 'Low',  rating: 1.0);
+        $this->insertYetti(name: 'Low', rating: 1.0);
         $this->insertYetti(name: 'High', rating: 5.0);
-        $this->insertYetti(name: 'Mid',  rating: 3.0);
+        $this->insertYetti(name: 'Mid');
 
         $results = $this->repository->findTopRated(10);
 
         $this->assertSame('High', $results[0]->getName());
-        $this->assertSame('Mid',  $results[1]->getName());
-        $this->assertSame('Low',  $results[2]->getName());
+        $this->assertSame('Mid', $results[1]->getName());
+        $this->assertSame('Low', $results[2]->getName());
     }
 
     /**
@@ -57,7 +66,7 @@ final class YettiRepositoryTest extends IntegrationTestCase
     {
         $this->insertYetti(name: 'A', rating: 5.0);
         $this->insertYetti(name: 'B', rating: 4.0);
-        $this->insertYetti(name: 'C', rating: 3.0);
+        $this->insertYetti(name: 'C');
 
         $this->assertCount(2, $this->repository->findTopRated(2));
     }
@@ -73,9 +82,9 @@ final class YettiRepositoryTest extends IntegrationTestCase
 
         $results = $this->repository->findRecent(3);
 
-        $this->assertSame('Third',  $results[0]->getName());
+        $this->assertSame('Third', $results[0]->getName());
         $this->assertSame('Second', $results[1]->getName());
-        $this->assertSame('First',  $results[2]->getName());
+        $this->assertSame('First', $results[2]->getName());
     }
 
     /**

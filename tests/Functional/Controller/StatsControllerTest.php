@@ -23,7 +23,7 @@ final class StatsControllerTest extends FunctionalTestCase
         $this->assertSelectorTextContains('body', 'Podle roku');
         $this->assertSelectorTextContains('body', 'Podle měsíce');
         $this->assertSelectorTextContains('body', 'Žebříček Yetiů');
-        $this->assertSelectorExists('canvas#chartDaily');
+        $this->assertSelectorExists('canvas[data-controller="symfony--ux-chartjs--chart"]');
     }
 
     /**

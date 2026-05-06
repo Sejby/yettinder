@@ -18,10 +18,12 @@ final readonly class VoteRepository implements VoteRepositoryInterface
      */
     public function findVotedYettiIds(string $sessionId): array
     {
-        $rows = $this->connection->fetchFirstColumn(
-            'SELECT yetti_id FROM yetti_vote WHERE session_id = ?',
-            [$sessionId],
-        );
+        $rows = $this->connection->createQueryBuilder()
+            ->select('yetti_id')
+            ->from('yetti_vote')
+            ->where('session_id = :sessionId')
+            ->setParameter('sessionId', $sessionId)
+            ->fetchFirstColumn();
 
         return array_map(intval(...), $rows);
     }

@@ -48,13 +48,13 @@ final class YettiControllerTest extends FunctionalTestCase
     public function testSubmitValidFormCreatesYettiAndRedirects(): void
     {
         $crawler = $this->client->request('GET', '/yetti/new');
-        $form    = $crawler->selectButton('Uložit Yettiho')->form([
-            'name'    => 'Karel',
-            'gender'  => 'male',
-            'height'  => '182',
-            'weight'  => '80',
-            'address' => 'Brno',
-            'rating'  => '4.0',
+        $form = $crawler->selectButton('Uložit Yettiho')->form([
+            'yetti_form[name]' => 'Karel',
+            'yetti_form[gender]' => 'male',
+            'yetti_form[height]' => '182',
+            'yetti_form[weight]' => '80',
+            'yetti_form[address]' => 'Brno',
+            'yetti_form[rating]' => '4.0',
         ]);
 
         $this->client->submit($form);
@@ -67,29 +67,31 @@ final class YettiControllerTest extends FunctionalTestCase
     public function testSubmitFormWithMissingNameShowsError(): void
     {
         $crawler = $this->client->request('GET', '/yetti/new');
-        $form    = $crawler->selectButton('Uložit Yettiho')->form([
-            'name'    => '',
-            'gender'  => 'male',
-            'height'  => '175',
-            'weight'  => '70',
-            'address' => 'Praha',
-            'rating'  => '3.0',
+        $form = $crawler->selectButton('Uložit Yettiho')->form([
+            'yetti_form[name]' => '',
+            'yetti_form[gender]' => 'male',
+            'yetti_form[height]' => '175',
+            'yetti_form[weight]' => '70',
+            'yetti_form[address]' => 'Praha',
+            'yetti_form[rating]' => '3.0',
         ]);
 
         $this->client->submit($form);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.alert-danger', 'Jméno je povinné');
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorTextContains('.invalid-feedback', 'Jméno je povinné');
     }
 
     public function testSubmitFormWithInvalidCsrfShowsError(): void
     {
         $this->client->request('POST', '/yetti/new', [
-            '_token' => 'invalid-token',
-            'name'   => 'Karel',
-            'gender' => 'male',
+            'yetti_form' => [
+                '_token' => 'invalid-token',
+                'name' => 'Karel',
+                'gender' => 'male',
+            ],
         ]);
 
-        $this->assertSelectorTextContains('body', 'bezpečnostní token');
+        $this->assertSelectorTextContains('.alert-danger', 'bezpečnostní token');
     }
 }

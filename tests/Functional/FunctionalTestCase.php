@@ -23,7 +23,7 @@ abstract class FunctionalTestCase extends WebTestCase
     {
         parent::setUpBeforeClass();
 
-        $kernel      = static::bootKernel();
+        $kernel = static::bootKernel();
         $application = new Application($kernel);
         $application->setAutoExit(false);
         $application->run(
@@ -64,13 +64,14 @@ abstract class FunctionalTestCase extends WebTestCase
     protected function insertYetti(
         string $name = 'Test',
         string $gender = 'male',
-        int $height = 175,
-        float $weight = 70.0,
+        int    $height = 175,
+        float  $weight = 70.0,
         string $address = 'Praha',
-        float $rating = 3.0,
-    ): int {
+        float  $rating = 3.0,
+    ): int
+    {
         $this->getConnection()->insert('yetti', compact('name', 'gender', 'height', 'weight', 'address', 'rating'));
 
-        return (int) $this->getConnection()->lastInsertId();
+        return (int)$this->getConnection()->lastInsertId();
     }
 }

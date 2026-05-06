@@ -3,42 +3,42 @@
 {% block title %}Statistiky | Yettinder{% endblock %}
 
 {% block body %}
-<nav class="navbar navbar-light border-bottom bg-white">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">🏔️ Yettinder</a>
-        <div class="d-flex gap-2">
-            <a class="btn btn-sm btn-dark" href="{{ path('app_match') }}">Najít match</a>
-            <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_yetti_new') }}">+ Přidat Yetiho</a>
+    <nav class="navbar navbar-light border-bottom bg-white">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">🏔️ Yettinder</a>
+            <div class="d-flex gap-2">
+                <a class="btn btn-sm btn-dark" href="{{ path('app_match') }}">Najít match</a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_yetti_new') }}">+ Přidat Yetiho</a>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="container py-5">
+    <div class="container py-5">
 
-    <h1 class="h3 mb-4">Statistiky hlasování</h1>
+        <h1 class="h3 mb-4">Statistiky hlasování</h1>
 
-    <div class="mb-5">
-        <h2 class="h5 mb-3">Hlasy za posledních 30 dní</h2>
-        <canvas id="chartDaily" height="80"></canvas>
-    </div>
+        <div class="mb-5">
+            <h2 class="h5 mb-3">Hlasy za posledních 30 dní</h2>
+            {{ render_chart(chart, {'height': '80'}) }}
+        </div>
 
-    <div class="row g-4">
+        <div class="row g-4">
 
-        <div class="col-md-4">
-            <h2 class="h5 mb-3">Podle roku</h2>
-            {% if byYear is empty %}
-                <p class="text-muted">Zatím žádné hlasy.</p>
-            {% else %}
-                <table class="table table-sm">
-                    <thead class="table-light">
+            <div class="col-md-4">
+                <h2 class="h5 mb-3">Podle roku</h2>
+                {% if byYear is empty %}
+                    <p class="text-muted">Zatím žádné hlasy.</p>
+                {% else %}
+                    <table class="table table-sm">
+                        <thead class="table-light">
                         <tr>
                             <th>Rok</th>
                             <th>👍</th>
                             <th>👎</th>
                             <th>Skóre</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         {% for row in byYear %}
                             <tr>
                                 <td>{{ row.period }}</td>
@@ -47,27 +47,27 @@
                                 <td>{% if row.score > 0 %}+{% endif %}{{ row.score }}</td>
                             </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-        </div>
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
 
-        <div class="col-md-4">
-            <h2 class="h5 mb-3">Podle měsíce</h2>
-            {% if byMonth is empty %}
-                <p class="text-muted">Zatím žádné hlasy.</p>
-            {% else %}
-                <div style="max-height: 340px; overflow-y: auto">
-                    <table class="table table-sm">
-                        <thead class="table-light sticky-top">
+            <div class="col-md-4">
+                <h2 class="h5 mb-3">Podle měsíce</h2>
+                {% if byMonth is empty %}
+                    <p class="text-muted">Zatím žádné hlasy.</p>
+                {% else %}
+                    <div style="max-height: 340px; overflow-y: auto">
+                        <table class="table table-sm">
+                            <thead class="table-light sticky-top">
                             <tr>
                                 <th>Měsíc</th>
                                 <th>👍</th>
                                 <th>👎</th>
                                 <th>Skóre</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             {% for row in byMonth %}
                                 <tr>
                                     <td>{{ row.period }}</td>
@@ -76,84 +76,44 @@
                                     <td>{% if row.score > 0 %}+{% endif %}{{ row.score }}</td>
                                 </tr>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-        </div>
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
 
-        <div class="col-md-4">
-            <h2 class="h5 mb-3">Žebříček Yetiů</h2>
-            {% if topYettis is empty %}
-                <p class="text-muted">Zatím žádní Yetti.</p>
-            {% else %}
-                <table class="table table-sm">
-                    <thead class="table-light">
+            <div class="col-md-4">
+                <h2 class="h5 mb-3">Žebříček Yetiů</h2>
+                {% if top is empty %}
+                    <p class="text-muted">Zatím žádní Yetti.</p>
+                {% else %}
+                    <table class="table table-sm">
+                        <thead class="table-light">
                         <tr>
                             <th>#</th>
                             <th>Jméno</th>
                             <th>Hlasů</th>
                             <th>Skóre</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in topYettis %}
+                        </thead>
+                        <tbody>
+                        {% for yetti in top %}
                             <tr>
                                 <td class="text-muted">{{ loop.index }}</td>
                                 <td>
-                                    {{ row.name }}<br>
-                                    <small class="text-muted">{{ row.address }}</small>
+                                    {{ yetti.name }}<br>
+                                    <small class="text-muted">{{ yetti.address }}</small>
                                 </td>
-                                <td>{{ row.vote_count }}</td>
-                                <td>{% if row.score > 0 %}+{% endif %}{{ row.score }}</td>
+                                <td>{{ yetti.voteCount }}</td>
+                                <td>{% if yetti.score > 0 %}+{% endif %}{{ yetti.score }}</td>
                             </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+
         </div>
 
     </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script>
-(function () {
-    const labels   = {{ chartLabels|json_encode|raw }};
-    const positive = {{ chartPositive|json_encode|raw }};
-    const negative = {{ chartNegative|json_encode|raw }};
-
-    new Chart(document.getElementById('chartDaily'), {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                {
-                    label: '👍 Líbí se',
-                    data: positive,
-                    backgroundColor: 'rgba(25, 135, 84, 0.7)',
-                    borderRadius: 3,
-                },
-                {
-                    label: '👎 Nelíbí se',
-                    data: negative,
-                    backgroundColor: 'rgba(220, 53, 69, 0.6)',
-                    borderRadius: 3,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: { stacked: false, grid: { display: false } },
-                y: { beginAtZero: true, ticks: { stepSize: 1 } },
-            },
-            plugins: {
-                legend: { position: 'top' },
-            },
-        },
-    });
-}());
-</script>
 {% endblock %}

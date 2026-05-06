@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Dto\YettiForm;
 use App\Dto\YettiMatch;
 use App\Entity\Yetti;
 
 interface YettiRepositoryInterface
 {
+    /** @return list<Yetti> */
+    public function findAll(): array;
+
     /** @return list<Yetti> */
     public function findTopRated(int $limit = 10): array;
 
@@ -18,5 +22,7 @@ interface YettiRepositoryInterface
     /** @param int[] $excludeIds */
     public function findNextMatch(array $excludeIds): ?YettiMatch;
 
-    public function save(Yetti $yetti): void;
+    public function exists(int $id): bool;
+
+    public function save(YettiForm $form): void;
 }
