@@ -3,7 +3,7 @@
 ## Spuštění
 
 ```bash
-docker compose up
+docker compose -f compose.yaml up
 ```
 
 - Formulář přes **symfony/form**
